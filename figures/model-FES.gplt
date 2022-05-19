@@ -1,0 +1,60 @@
+#!/usr/bin/gnuplot
+reset
+set encoding iso_8859_1
+set term post eps color enhanced "Helvetica" 21
+filename='Model-FES'
+set output filename.'.eps'
+
+load "palette_google_slides.pal"
+load "ylgnbu.pal" 
+#load "~/gnuplot-palettes/ylgnbu.pal" 
+#load "~/gnuplot-palettes/fessa.pal"
+#set pal neg
+set pal maxcol 14
+
+unset k
+set vi map
+set isosample 300
+set sample 300
+
+#magic settings: size 0.83,1; lm=0.1; rm=0.68; tm=0.97; bm=0.15
+set size 0.83,1
+#set size square
+set lmargin at screen 0.1
+set rmargin at screen 0.68
+set tmargin at screen 0.97
+set bmargin at screen 0.15
+
+#set xl "x (known CV)"
+set xl "x"
+set xr [-3:3]
+set xtics -2,2,2 
+#set format x "%.1f" 
+
+#set yl "y (unknown CV)"
+set yl "y"
+set yr [-3:3]
+set ytics -2,2,2 
+#set format y "%.1f" 
+
+#set zr [0:35]
+
+set cbl "Free Energy (k_BT)"
+set cbr [0:35]
+set cbtics 0,10,40
+
+#epsilon=0.01
+#set label "{/:Bold A}" tc rgb "red" at -1.95,0.75 front
+set label "A" at -1.95,0.75 front
+#set label "{/:Bold B}" tc rgb "red" at 1.65,-0.85 front
+set label "B" at 1.65,-0.85 front
+
+t=-pi/4*0.6
+c=cos(t)
+s=sin(t)
+sp 2*(c*x-s*y)**4+2*(s*x+c*y)**4-4.0*(c*x-s*y)**2-8.0*(s*x+c*y)**2+4*(c*x-s*y)*(s*x+c*y)+1.6*(c*x-s*y)+0.2*(s*x+c*y)+19 w pm3d
+
+system('ps2pdf -dPDFSETTINGS=/prepress -dEPSCrop '.filename.'.eps')
+#system('pdfcrop --margins "3 3 3 3" '.filename.'.pdf _tmp.pdf; mv _tmp.pdf '.filename.'.pdf')
+#system('convert -density 200 '.filename.'.eps '.filename.'.png')
+system('rm '.filename.'.eps')

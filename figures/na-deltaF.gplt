@@ -1,0 +1,70 @@
+#!/usr/bin/gnuplot
+reset
+set encoding iso_8859_1
+set term post eps color enhanced "Helvetica" 21
+filename='Na-deltaF'
+set output filename.'.eps'
+
+load "palette_google_slides.pal"
+beta=0.343635
+deltaF=61.5*beta
+
+set size 0.75,1
+set multiplot #layout 2,1
+set lmargin at screen 0.105
+set rmargin at screen 0.75-0.03
+TOP=1
+DY=0.42
+safety=0.01
+e=0.001
+
+#unset k
+set k height 1. spacing 1.2
+
+set xr [0:200]
+set xtics 0,50,200
+#set yl "Free Energy Difference"
+set yr [15.5:28.5]
+set ytics 15,5,30
+
+###########################
+set tmargin at screen TOP-safety
+set bmargin at screen TOP-DY-safety
+set label "WTMetaD" tc rgb l_green at screen 0.53+e,TOP-DY-safety+0.06-e
+set label "WTMetaD" tc rgb d_green at screen 0.53,TOP-DY-safety+0.06
+
+set format x ""
+
+set style rect fc rgb l_blue fs solid 0.15 noborder
+set obj rect from 0,deltaF-0.5 to 200,deltaF+0.5
+
+p  deltaF lw 4 dt 3 lc rgb d_blue notitle,\
+  'data/na-metad_deltaF.data'u ($1/1000):($2*beta) w l lw 5 dt (5,1) lc rgb l_green t "direct",\
+                           ''u ($1/1000):($3*beta) w l lw 5 dt 1     lc rgb d_green t "reweighted"
+unset label
+
+###########################
+set tmargin at screen TOP-DY-safety
+set bmargin at screen TOP-2*DY-safety
+set label "VES{/Symbol D}F" tc rgb l_orange at screen 0.55+e,TOP-2*DY-safety+0.06-e
+set label "VES{/Symbol D}F" tc rgb d_orange at screen 0.55,TOP-2*DY-safety+0.06
+
+set xl "Time (ns)"
+set format x "%g"
+
+set yl "Free Energy Difference {/Symbol D}F_h (k_BT)" offset 0,5
+set format y "%g"
+
+set style rect fc rgb l_blue fs solid 0.15 noborder
+set obj rect from 0,deltaF-0.5 to 200,deltaF+0.5
+
+p  deltaF lw 4 dt 3 lc rgb d_blue notitle,\
+  'data/na-ves_deltaF.data'u ($1/1000):($2*beta) w l lw 5 dt (5,1) lc rgb l_orange t "direct",\
+                         ''u ($1/1000):($3*beta) w l lw 5 dt 1     lc rgb d_orange t "reweighted"
+
+unset multiplot
+
+system('ps2pdf -dPDFSETTINGS=/prepress -dEPSCrop '.filename.'.eps')
+#system('pdfcrop --margins "3 3 3 3" '.filename.'.pdf _tmp.pdf; mv _tmp.pdf '.filename.'.pdf')
+#system('convert -density 200 '.filename.'.eps '.filename.'.png')
+system('rm '.filename.'.eps')

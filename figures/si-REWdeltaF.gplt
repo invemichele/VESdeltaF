@@ -1,0 +1,98 @@
+#!/usr/bin/gnuplot
+reset
+set encoding iso_8859_1
+set term post eps color enhanced "Helvetica" 8
+filename='SI-REWdeltaF'
+set output filename.'.eps'
+
+load "palette_google_slides.pal"
+#set style fill transparent solid 0.25 noborder
+set style fill transparent pattern 6 bo
+beta=0.4
+deltaF=8.9*beta
+
+#set size 0.75,1
+set multiplot layout 3,3
+unset k
+
+###########################
+set xr [0:2000]
+set xtics 0,500,2000
+set xl "Time (ns)"
+#set format x ""
+
+#set yl "Free Energy Difference {/Symbol D}F_h (k_BT)"
+set yl "reweighted {/Symbol D}F_h (k_BT)"
+set yr [-1:8]
+set ytics 0,4,8
+#set format y ""
+
+set style rect fc rgb l_blue fs solid 0.15 noborder
+set obj rect from 0,deltaF-0.5 to 2000,deltaF+0.5
+Xlab=1170
+Ylab=7
+
+### WTmetad ###
+LABEL="WTMetaD, 1 walker "
+set label LABEL at Xlab,Ylab
+p deltaF lw 2 dt 3 lc rgb d_blue notitle,\
+  for [i=0:9]'data/si-ala/one_walker/'.i.'_metad/FES_rew-2deltaF.data'u ($1/1e3):($2*0.4)w l lw 2
+unset label
+
+LABEL="WTMetaD, 4 walkers"
+set label LABEL at Xlab,Ylab
+p deltaF lw 2 dt 3 lc rgb d_blue notitle,\
+   for [i=0:9]'data/si-ala/4_walkers/'.i.'_metad/FES_rew-2deltaF.data'u ($1/1e3):($2*0.4)w l lw 2
+unset label
+
+LABEL="WTMetaD, 16 walkers"
+set label LABEL at Xlab,Ylab
+p deltaF lw 2 dt 3 lc rgb d_blue notitle,\
+  for [i=0:9]'data/si-ala/16_walkers/'.i.'_metad/FES_rew-2deltaF.data'u ($1/1e3):($2*0.4)w l lw 2
+unset label
+
+### TTmetad ###
+LABEL="TTMetaD, 1 walker "
+set label LABEL at Xlab,Ylab
+p deltaF lw 2 dt 3 lc rgb d_blue notitle,\
+  for [i=0:9]'data/si-ala/one_walker/'.i.'_ttmetad/FES_rew-2deltaF.data'u ($1/1e3):($2*0.4)w l lw 2
+unset label
+
+LABEL="TTMetaD, 4 walkers"
+set label LABEL at Xlab,Ylab
+p deltaF lw 2 dt 3 lc rgb d_blue notitle,\
+   for [i=0:9]'data/si-ala/4_walkers/'.i.'_ttmetad/FES_rew-2deltaF.data'u ($1/1e3):($2*0.4)w l lw 2
+unset label
+
+LABEL="TTMetaD, 16 walkers"
+set label LABEL at Xlab,Ylab
+p deltaF lw 2 dt 3 lc rgb d_blue notitle,\
+  for [i=0:9]'data/si-ala/16_walkers/'.i.'_ttmetad/FES_rew-2deltaF.data'u ($1/1e3):($2*0.4)w l lw 2
+unset label
+
+### VESdeltaF ###
+LABEL="VES{/Symbol D}F, 1 walker "
+set label LABEL at Xlab,Ylab
+p deltaF lw 2 dt 3 lc rgb d_blue notitle,\
+    for [i=0:9]'data/si-ala/one_walker/'.i.'_ves-p/FES_rew-2deltaF.data'u ($1/1e3):($2*0.4)w l lw 2
+unset label
+
+LABEL="VES{/Symbol D}F, 4 walkers"
+set label LABEL at Xlab,Ylab
+p deltaF lw 2 dt 3 lc rgb d_blue notitle,\
+   for [i=0:9]'data/si-ala/4_walkers/'.i.'_ves-p/FES_rew-2deltaF.data'u ($1/1e3):($2*0.4)w l lw 2
+unset label
+
+LABEL="VES{/Symbol D}F, 16 walkers"
+set label LABEL at Xlab,Ylab
+p deltaF lw 2 dt 3 lc rgb d_blue notitle,\
+  for [i=0:9]'data/si-ala/16_walkers/'.i.'_ves-p/FES_rew-2deltaF.data'u ($1/1e3):($2*0.4)w l lw 2
+unset label
+
+
+unset multiplot
+
+system('ps2pdf -dPDFSETTINGS=/prepress -dEPSCrop '.filename.'.eps')
+#system('pdfcrop --margins "3 3 3 3" '.filename.'.pdf _tmp.pdf; mv _tmp.pdf '.filename.'.pdf')
+#system('convert -density 200 '.filename.'.eps '.filename.'.png')
+system('rm '.filename.'.eps')

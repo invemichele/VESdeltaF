@@ -1,0 +1,55 @@
+#!/usr/bin/gnuplot
+reset
+set encoding iso_8859_1
+set term post eps color enhanced "Helvetica" 21
+filename='Ala-basins'
+set output filename.'.eps'
+
+load "palette_google_slides.pal"
+#set style fill transparent solid 0.25 noborder
+beta=0.4
+deltaF=8.9*beta
+
+set size 1,0.75
+set multiplot #layout 2,1
+
+LEFT=0.13
+DX=0.43
+set tmargin at screen 0.75-0.02
+set bmargin at screen 0.15
+
+#unset k
+set k l L reverse spacing 1.2 height 0.8 #width -1.
+
+set xl "{/Symbol y}"
+set xr [-pi:pi]
+set xtics ('-{/Symbol p}/2' -pi/2, 0, '{/Symbol p}/2' pi/2)
+
+set yl "Free Energy (k_BT)"
+set yr [0:17.5]
+set ytics 0,5,30 
+
+###########################
+set lmargin at screen LEFT
+set rmargin at screen LEFT+DX
+
+p 'data/ala-fesA.data'u 1:($2*beta)w l lw 6 lc rgb d_green t "F_A",\
+  'data/ala-1Dfes2.data'u 1:($2*beta)w l lw 8 dt 3 lc rgb d_blue t "F_{ref}"
+
+###########################
+set lmargin at screen LEFT+DX
+set rmargin at screen LEFT+2*DX
+
+unset yl 
+set format y ""
+
+
+p 'data/ala-fesB.data'u 1:($2*beta+deltaF)w l lw 6 lc rgb d_green t "F_B+{/Symbol D}F_h",\
+  'data/ala-1Dfes2.data'u 1:($2*beta)w l lw 8 dt 3 lc rgb d_blue t "F_{ref}"
+
+unset multiplot
+
+system('ps2pdf -dPDFSETTINGS=/prepress -dEPSCrop '.filename.'.eps')
+#system('pdfcrop --margins "3 3 3 3" '.filename.'.pdf _tmp.pdf; mv _tmp.pdf '.filename.'.pdf')
+#system('convert -density 200 '.filename.'.eps '.filename.'.png')
+system('rm '.filename.'.eps')

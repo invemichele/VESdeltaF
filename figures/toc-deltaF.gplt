@@ -1,0 +1,58 @@
+#!/usr/bin/gnuplot
+reset
+set encoding iso_8859_1
+set term post eps color enhanced "Helvetica" 21
+filename='TOC-deltaF_metad'
+set output filename.'.eps'
+
+load "palette_google_slides.pal"
+
+set size 1,0.75
+
+unset k
+#set k height 1.5 spacing 1.2
+
+set xl "Steps (x10^6)"
+set xr [0:40]
+set xtics 0,10,40
+#set format x ""
+
+#set yl "Free Energy Difference (k_BT)"
+set yl "{/Symbol D} F (k_BT)"
+set yr [0:10]
+set ytics 1,4,9
+#set format y ""
+
+###########################
+#set label "WTMetaD" tc rgb l_green at screen 0.53+e,TOP-DY-safety+0.06-e
+#set label "WTMetaD" tc rgb d_green at screen 0.53,TOP-DY-safety+0.06
+
+set style rect fc rgb l_blue fs solid 0.15 noborder
+set obj rect from 0,2.9 to 200,3.9
+
+p  3.4 lw 4 dt 3 lc rgb d_blue notitle,\
+  'data/toc-deltaF_metad.data'u ($1/0.005/1000000):2 w l lw 5 lc rgb d_green
+#unset label
+
+system('ps2pdf -dPDFSETTINGS=/prepress -dEPSCrop '.filename.'.eps')
+#system('pdfcrop --margins "3 3 3 3" '.filename.'.pdf _tmp.pdf; mv _tmp.pdf '.filename.'.pdf')
+#system('convert -density 200 '.filename.'.eps '.filename.'.png')
+system('rm '.filename.'.eps')
+
+###########################
+filename='TOC-deltaF_ves'
+set output filename.'.eps'
+
+#set label "VES{/Symbol D}F" tc rgb l_orange at screen 0.55+e,TOP-2*DY-safety+0.06-e
+#set label "VES{/Symbol D}F" tc rgb d_orange at screen 0.55,TOP-2*DY-safety+0.06
+
+set style rect fc rgb l_blue fs solid 0.15 noborder
+set obj rect from 0,2.9 to 200,3.9
+
+p  3.4 lw 4 dt 3 lc rgb d_blue notitle,\
+  'data/toc-deltaF_ves.data'u ($1/0.005/1000000):2 w l lw 5 lc rgb d_orange
+
+system('ps2pdf -dPDFSETTINGS=/prepress -dEPSCrop '.filename.'.eps')
+#system('pdfcrop --margins "3 3 3 3" '.filename.'.pdf _tmp.pdf; mv _tmp.pdf '.filename.'.pdf')
+#system('convert -density 200 '.filename.'.eps '.filename.'.png')
+system('rm '.filename.'.eps')

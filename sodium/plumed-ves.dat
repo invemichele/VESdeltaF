@@ -1,0 +1,26 @@
+# vim:ft=plumed
+LOAD FILE=DebyeStructureFactor.cpp
+UNITS LENGTH=A
+
+ene: ENERGY
+cv: DEBYE_STRUCTURE_FACTOR CUTOFF=10.5 ACTIVE_Q=2.070595
+
+VES_DELTA_F ...
+  LABEL=ves
+  ARG=cv.*
+  FILE_F0=fesA.data
+  FILE_F1=fesB.data
+  TEMP=350
+  AV_STRIDE=500
+  BIASFACTOR=20
+  M_STEP=1
+  PRINT_STRIDE=100
+  ALPHA_FILE=Alpha.data
+... VES_DELTA_F
+PRINT FMT=%g STRIDE=500   FILE=Colvar.data ARG=cv.*,ene,ves.bias,ves.rct
+
+ENDPLUMED
+-- !!bash --
+--- Active shells ---
+awk -v n=1 -v trig=1 'BEGIN{printf "cv: DEBYE_STRUCTURE_FACTOR NOPBC ACTIVE_Q="}NR>10{der=$2-prev; if ($2>trig && der<0 && prev_der>0 && ++conta<=n) {printf val; if (conta<n) printf ","; else printf "\n"} prev=$2; prev_der=der; val=$1}' ../unb-bcc/DebyeSq.data
+

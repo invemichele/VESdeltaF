@@ -1,0 +1,100 @@
+#!/usr/bin/gnuplot
+reset
+set encoding iso_8859_1
+set term post eps color enhanced "Helvetica" 21
+filename='Ala-FES'
+set output filename.'.eps'
+
+load "palette_google_slides.pal"
+#load "~/gnuplot-palettes/fessa.pal" 
+#load "~/gnuplot-palettes/ylgnbu.pal" 
+load "ylgnbu.pal" 
+#set pal neg
+set pal maxcol 14
+
+set size 0.9,1
+set multiplot
+lm=0.3
+rm=0.75
+bm=0.15
+tm=0.8
+delta=0.01
+set lmargin at screen lm
+set rmargin at screen rm
+set bmargin at screen bm
+set tmargin at screen tm
+
+unset k
+set vi map
+#set size square
+#set isosample 300
+#set sample 300
+
+beta=0.4
+epsilon=0.01
+set xl "{/Symbol f}"
+set xr [-pi+epsilon:pi-epsilon]
+set xtics ('-{/Symbol p}/2' -pi/2, 0, '{/Symbol p}/2' pi/2)
+#set xtics ('' -pi/2,'' 0,'' pi/2)
+
+#set yl "{/Symbol y}"
+set yr [-pi+epsilon:pi-epsilon]
+#set ytics ('-{/Symbol p}/2' -pi/2, 0, '{/Symbol p}/2' pi/2)
+set ytics ('' -pi/2,'' 0,'' pi/2)
+
+#set zr [0:35]
+
+set cbl "Free Energy (k_BT)"
+set cbr [0:35]
+set cbtics 0,10,40
+
+set label "A" at -pi/2-0.05,pi/2+0.7 front
+#set label "{/:Bold A}" tc rgb "red" at -pi/2-0.05,pi/2+0.7 front
+set label "B" at 0.95,-0.8 front
+#set label "{/:Bold B}" tc rgb "red" at 0.95,-0.8 front
+
+sp 'data/ala-2Dfes.data'u 1:2:($3*beta) w pm3d
+
+unset label
+
+###########################
+set style fill transparent solid 0.5 noborder
+
+set lmargin at screen lm
+set rmargin at screen rm
+set bmargin at screen tm+delta
+set tmargin at screen 1-delta
+
+unset xl
+set xtics ('' -pi/2,'' 0,'' pi/2)
+
+set yl "F({/Symbol f})"
+set yr [0:30]
+set ytics 10,10,20 
+
+p 'data/ala-1Dfes1.data'u 1:($2*beta) w filledcurves above y1=0 lc rgb l_blue,\
+                      ''u 1:($2*beta) w l lw 6 lc rgb d_blue
+
+###########################
+set lmargin at screen 0.15+delta
+set rmargin at screen lm-delta
+set bmargin at screen bm
+set tmargin at screen tm
+
+set xl "F({/Symbol y})"
+set xr [12:0]
+set xtics 10,-5,4 
+
+set yl "{/Symbol y}" #offset 1
+set yr [-pi+epsilon:pi-epsilon]
+set ytics ('-{/Symbol p}/2' -pi/2, 0, '{/Symbol p}/2' pi/2)
+
+p 'data/ala-1Dfes2.data'u ($2*beta):1 w filledcurves below x1=0 lc rgb l_blue,\
+                      ''u ($2*beta):1 w l lw 6 lc rgb d_blue
+
+unset multiplot
+
+system('ps2pdf -dPDFSETTINGS=/prepress -dEPSCrop '.filename.'.eps')
+system('pdfcrop --margins "3 3 3 3" '.filename.'.pdf _tmp.pdf; mv _tmp.pdf '.filename.'.pdf')
+#system('convert -density 200 '.filename.'.eps '.filename.'.png')
+system('rm '.filename.'.eps')

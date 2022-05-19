@@ -1,0 +1,11 @@
+#palette taken from google slides colours
+
+d_red="#cc0000"    #dark red 1
+d_blue="#3C78D8"   #dark cornflower blue 1
+d_green="#6AA84F"  #dark green 1
+d_orange="#E69138" #dark orange 1
+d_purple="#674EA7" #dark purple 1
+
+l_blue="#6d9eeb"   #light cornflower blue 1
+l_green="#93c47d"  #light green 1
+l_orange="#f6b26b" #light orange 1

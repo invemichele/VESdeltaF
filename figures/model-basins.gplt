@@ -1,0 +1,62 @@
+#!/usr/bin/gnuplot
+reset
+set encoding iso_8859_1
+set term post eps color enhanced "Helvetica" 21
+filename='Model-basins'
+set output filename.'.eps'
+
+load "palette_google_slides.pal"
+#set style fill transparent solid 0.25 noborder
+deltaF=3.4
+
+set size 1,0.75
+set multiplot #layout 2,1
+
+LEFT=0.13
+DX=0.43
+set tmargin at screen 0.75-0.02
+set bmargin at screen 0.15
+
+#unset k
+set k l L invert reverse spacing 1.2 #height 0.8
+set k at -2.5,24
+
+set xl "x"
+set xr [-3:3]
+set xtics -2,2,4
+
+set yl "Free Energy (k_BT)"
+set yr [0:25]
+set ytics 0,10,30 
+
+###########################
+set lmargin at screen LEFT
+set rmargin at screen LEFT+DX
+
+#p '<paste data/model-fesA.data data/model-fesB.data'w l lw 6 lc rgb d_green t "F_A",\
+#  ''u 1:($5+deltaF) w l lw 6 lc rgb l_green t "F_B+{/Symbol D}F_h",\
+#  ''u 1:(-log(exp(-$2)+exp(-$5-deltaF))) w l lw 8 dt (5,3) lc rgb d_orange t "F_{model}"
+p '<paste data/model-fesA.data data/model-fesB.data'u 1:(-log(exp(-$2)+exp(-$5-deltaF))) w l lw 6 lc rgb d_orange t "F_{model}",\
+  ''u 1:($5+deltaF) w l lw 8 dt (3,2) lc rgb l_green t "F_B+{/Symbol D}F_h",\
+  ''w l lw 8 dt (5,3) lc rgb d_green t "F_A"
+
+###########################
+set lmargin at screen LEFT+DX
+set rmargin at screen LEFT+2*DX
+
+set k at -2.3,21.8
+unset yl 
+set format y ""
+
+
+#p 'data/model-FES.data'w l lw 6 lc rgb d_blue t "F_{ref}",\
+#  '<paste data/model-fesA.data data/model-fesB.data'u 1:(-log(exp(-$2)+exp(-$5-deltaF))) w l lw 8 dt (5,3) lc rgb d_orange t "F_{model}"
+p '<paste data/model-fesA.data data/model-fesB.data'u 1:(-log(exp(-$2)+exp(-$5-deltaF))) w l lw 6 lc rgb d_orange t "F_{model}",\
+  'data/model-FES.data'w l lw 8 dt 3 lc rgb d_blue t "F_{ref}"
+
+unset multiplot
+
+system('ps2pdf -dPDFSETTINGS=/prepress -dEPSCrop '.filename.'.eps')
+#system('pdfcrop --margins "3 3 3 3" '.filename.'.pdf _tmp.pdf; mv _tmp.pdf '.filename.'.pdf')
+#system('convert -density 200 '.filename.'.eps '.filename.'.png')
+system('rm '.filename.'.eps')

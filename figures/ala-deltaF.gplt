@@ -1,0 +1,84 @@
+#!/usr/bin/gnuplot
+reset
+set encoding iso_8859_1
+set term post eps color enhanced "Helvetica" 21
+filename='Ala-deltaF'
+set output filename.'.eps'
+
+load "palette_google_slides.pal"
+#set style fill transparent solid 0.25 noborder
+set style fill transparent pattern 6 bo
+beta=0.4
+deltaF=8.9*beta
+
+set size 0.75,1
+set multiplot #layout 2,1
+set lmargin at screen 0.1
+#set rmargin at screen 1-0.18
+TOP=1
+DY=0.42
+safety=0.01
+
+#unset k
+set k height 1. spacing 1.2
+
+set xr [0:2000]
+set xtics 0,500,2000
+#set yl "Free Energy Difference"
+set yr [0:10]
+set ytics 3,4,12
+
+###########################
+set tmargin at screen TOP-safety
+set bmargin at screen TOP-DY-safety
+
+Xlab=0.21
+Ylab=TOP-safety-0.06
+LABEL="1 walker"
+set obj rect at screen Xlab,Ylab size char strlen(LABEL), char 1.1 fs solid noborder
+set label LABEL at screen Xlab,Ylab center
+
+set format x ""
+
+set style rect fc rgb l_blue fs solid 0.15 noborder
+set obj rect from 0,deltaF-0.5 to 2000,deltaF+0.5
+
+p  deltaF lw 4 dt 3 lc rgb d_blue notitle,\
+  'data/ala-ttmetad_rew_1.data'u ($1/1000):(($2-$3)*beta):(($2+$3)*beta)w filledcurves fc rgb l_green notitle,\
+                             ''u ($1/1000):($2*beta)w l lw 5 lc rgb d_green t "TTMetaD",\
+      'data/ala-ves_rew_1.data'u ($1/1000):(($2-$3)*beta):(($2+$3)*beta)w filledcurves fc rgb l_orange notitle,\
+                             ''u ($1/1000):($2*beta)w l lw 5 lc rgb d_orange t "VES{/Symbol D}F"
+#to add border lines
+#                             ''u ($1/1000):(($2-$3)*beta)w l lc rgb l_green notitle,\
+#                             ''u ($1/1000):(($2+$3)*beta)w l lc rgb l_green notitle,\
+#                             ''u ($1/1000):(($2-$3)*beta)w l lc rgb l_orange notitle,\
+#                             ''u ($1/1000):(($2+$3)*beta)w l lc rgb l_orange notitle,\
+unset label
+
+###########################
+set tmargin at screen TOP-DY-safety
+set bmargin at screen TOP-2*DY-safety
+
+set label "4 walkers" at screen Xlab,Ylab-DY center
+
+set xl "Time (ns)"
+set format x "%g"
+
+set yl "Free Energy Difference {/Symbol D}F_h (k_BT)" offset 0,5
+set format y "%g"
+
+set style rect fc rgb l_blue fs solid 0.15 noborder
+set obj rect from 0,deltaF-0.5 to 2000,deltaF+0.5
+
+p  deltaF lw 4 dt 3 lc rgb d_blue notitle,\
+  'data/ala-ttmetad_rew_4.data'u ($1/1000):(($2-$3)*beta):(($2+$3)*beta) w filledcurves fc rgb l_green notitle,\
+                             ''u ($1/1000):($2*beta) w l lw 5 lc rgb d_green t "TTMetaD",\
+      'data/ala-ves_rew_4.data'u ($1/1000):(($2-$3)*beta):(($2+$3)*beta) w filledcurves fc rgb l_orange notitle,\
+                             ''u ($1/1000):($2*beta) w l lw 5 lc rgb d_orange t "VES{/Symbol D}F"
+
+unset multiplot
+
+system('ps2pdf -dPDFSETTINGS=/prepress -dEPSCrop '.filename.'.eps')
+#system('pdfcrop --margins "3 3 3 3" '.filename.'.pdf _tmp.pdf; mv _tmp.pdf '.filename.'.pdf')
+#system('convert -density 200 '.filename.'.eps '.filename.'.png')
+system('rm '.filename.'.eps')

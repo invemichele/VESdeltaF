@@ -1,0 +1,28 @@
+#!/usr/bin/gnuplot
+reset
+set encoding iso_8859_1
+set term post eps color enhanced "Helvetica" 26
+filename='Model-colvar'
+set output filename.'.eps'
+
+load "palette_google_slides.pal"
+
+set size 1,0.75
+unset k
+
+set xl "Steps (x10^6)"
+set xr [0:16]
+set xtics 2,4,20 
+#set format x "%.1f" 
+
+set yl "x" # - known CV"
+set yr [-3.2:3.2]
+set ytics -2,2,2 
+#set format y "%.1f" 
+
+p 'data/model-colvar.data'ev 3 u ($1/0.005/1000000):2 pt 7 ps 0.6 lc rgb d_green
+
+system('ps2pdf -dPDFSETTINGS=/prepress -dEPSCrop '.filename.'.eps')
+#system('pdfcrop --margins "3 3 3 3" '.filename.'.pdf _tmp.pdf; mv _tmp.pdf '.filename.'.pdf')
+#system('convert -density 200 '.filename.'.eps '.filename.'.png')
+system('rm '.filename.'.eps')

@@ -1,0 +1,24 @@
+# vim:ft=plumed
+RESTART
+UNITS NATURAL
+
+ene: ENERGY
+p: POSITION ATOM=1
+
+VES_DELTA_F ...
+  LABEL=ves
+  ARG=p.x
+  TEMP=1
+  FILE_F0=fesA.data
+  FILE_F1=fesB.data
+  BIASFACTOR=10.0
+  AV_STRIDE=500
+  M_STEP=0.05
+  PRINT_STRIDE=100
+  ALPHA_FILE=Alpha.data
+... VES_DELTA_F
+
+PRINT FMT=%g STRIDE=500 FILE=Colvar.data ARG=p.x,p.y,ves.bias,ves.rct,ene
+
+ENDPLUMED
+

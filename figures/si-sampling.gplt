@@ -1,0 +1,46 @@
+#!/usr/bin/gnuplot
+reset
+set encoding iso_8859_1
+set term post eps color enhanced "Helvetica" 10
+filename='SI-sampling'
+set output filename.'.eps'
+
+load "palette_google_slides.pal"
+
+set size 1,0.5
+set multiplot layout 2,3
+set size square
+
+unset k
+
+set xl "{/Symbol f}"
+set xr [-pi:pi]
+set xtics ('-{/Symbol p}/2' -pi/2, 0, '{/Symbol p}/2' pi/2)
+
+set yl "{/Symbol y}"
+set yr [-pi:pi]
+set ytics ('-{/Symbol p}/2' -pi/2, 0, '{/Symbol p}/2' pi/2)
+
+
+set label "A" at -pi/2-0.05,pi/2+0.7 front
+#set label "{/:Bold A}" tc rgb "red" at -pi/2-0.05,pi/2+0.7 front
+set label "B" at 0.95,-0.8 front
+#set label "{/:Bold B}" tc rgb "red" at 0.95,-0.8 front
+
+p x
+p x
+p x
+set title "V({/Symbol y})"
+p    'data/si-bad_psi.data'ev 10 u 2:3 w d lc rgb d_green
+set title "V({/Symbol f})"
+p   'data/si-good_phi.data'ev 10 u 2:3 w d lc rgb d_green
+set title "V({/Symbol f},{/Symbol y})"
+p 'data/si-all_angles.data'ev 10 u 2:3 w d lc rgb d_green
+
+unset label
+unset multiplot
+
+system('ps2pdf -dPDFSETTINGS=/prepress -dEPSCrop '.filename.'.eps')
+#system('pdfcrop --margins "3 3 3 3" '.filename.'.pdf _tmp.pdf; mv _tmp.pdf '.filename.'.pdf')
+#system('convert -density 200 '.filename.'.eps '.filename.'.png')
+system('rm '.filename.'.eps')
